@@ -659,6 +659,760 @@ int main(int argc, char *argv[])
 			{
 				GuckMan();
 				puts("room26");
+void room_cursed_village(int *health, int *gold, int *honor);
+void room_bridge(int *health, int *gold, int *honor);
+void room_crypt(int *health, int *honor, int *kills);
+void room_oracle(int *health, int *gold, int *honor);
+void room_siege(int *health, int *armor, int *kills, int *honor);
+void print_stats(int health, int gold, int armor, int honor, int kills);
+int  roll(int sides);
+
+char *room_names[5] = {
+    "1. The Cursed Village",
+    "2. The Bridge of Liars",
+    "3. The Ancient Crypt",
+    "4. The Oracle's Cave",
+    "5. The Siege of Ironkeep"
+};
+
+int main(void)
+{
+    srand(time(NULL));
+
+    int health = 100;
+    int gold   = 15;
+    int armor  = 0;
+    int honor  = 50;
+    int kills  = 0;
+    int choice = 0;
+
+    printf("\n=============================================\n");
+    printf("       SHADOWS OF THE DARK REALM\n");
+    printf("=============================================\n");
+    printf("The kingdom has fallen silent.\n");
+    printf("No birds. No wind. Just the road ahead.\n");
+    printf("Five cursed places stand between you\n");
+    printf("and whatever fate awaits at the end.\n");
+    printf("\nHonor matters here. Some doors only open\n");
+    printf("for those who have earned the right.\n");
+
+    while (1)
+    {
+        if (health <= 0)
+        {
+            printf("\n=============================================\n");
+            printf("  You have fallen. The darkness wins.\n");
+            printf("=============================================\n");
+            print_stats(health, gold, armor, honor, kills);
+            return 0;
+        }
+
+        printf("\n=============================================\n");
+        printf("               THE ROAD\n");
+        printf("=============================================\n");
+        print_stats(health, gold, armor, honor, kills);
+        printf("\nWhere do you travel?\n");
+
+        int i;
+        for (i = 0; i < 5; i++)
+            printf("  %s\n", room_names[i]);
+        printf("  6. Rest here and quit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+            case 1: room_cursed_village(&health, &gold, &honor);       break;
+            case 2: room_bridge(&health, &gold, &honor);               break;
+            case 3: room_crypt(&health, &honor, &kills);               break;
+            case 4: room_oracle(&health, &gold, &honor);               break;
+            case 5: room_siege(&health, &armor, &kills, &honor);       break;
+            case 6:
+                printf("\nYou sit by a dying fire and close your eyes.\n");
+                printf("Final stats:\n");
+                print_stats(health, gold, armor, honor, kills);
+                printf("\nThe road ends here.\n");
+                return 0;
+            default:
+                printf("The road does not go that way.\n");
+        }
+    }
+
+    return 0;
+}
+
+int roll(int sides)
+{
+    return (rand() % sides) + 1;
+}
+
+void print_stats(int health, int gold, int armor, int honor, int kills)
+{
+    printf("  Health: %d | Gold: %d | Armor: %d | Honor: %d | Kills: %d\n",
+           health, gold, armor, honor, kills);
+}
+
+void room_cursed_village(int *health, int *gold, int *honor)
+{
+    int choice  = 0;
+    int running = 1;
+
+    char *villagers[4] = {"an old woman", "a child", "a farmer", "a knight"};
+
+    printf("\n=============================================\n");
+    printf("         THE CURSED VILLAGE\n");
+    printf("=============================================\n");
+    printf("Every person here is frozen mid-step.\n");
+    printf("Eyes open. Breathing. But they cannot move.\n");
+    printf("A curse hangs over this place like fog.\n");
+    printf("You are the only one free to act.\n");
+
+    while (running)
+    {
+        printf("\nWhat do you do?\n");
+        printf("  1. Search the frozen villagers for valuables\n");
+        printf("  2. Look for whoever cast this curse\n");
+        printf("  3. Try to wake one of them\n");
+        printf("  4. Burn a house to signal for help\n");
+        printf("  5. Leave. This is not your problem.\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+            case 1:
+            {
+                char *victim = villagers[rand() % 4];
+                int stolen = roll(8) + 2;
+                *gold  += stolen;
+                *honor -= 15;
+                printf("You search %s.\n", victim);
+                printf("You find %d gold. Their eyes follow you somehow.\n", stolen);
+                printf("You feel sick. Honor -15.\n");
+                break;
+            }
+            case 2:
+            {
+                int found = roll(4);
+                if (found == 4)
+                {
+                    printf("Behind the well you find a black candle still burning.\n");
+                    printf("You snuff it out. The air shifts.\n");
+                    printf("One villager gasps and collapses to their knees.\n");
+                    printf("\"Thank you,\" they whisper. \"The others will follow.\"\n");
+                    *honor += 20;
+                    *health += 10;
+                    if (*health > 100) *health = 100;
+                    printf("Honor +20. Health +10.\n");
+                    running = 0;
+                }
+                else
+                    printf("You search every corner. Nothing. The curse\n"
+                           "has no obvious source you can find.\n");
+                break;
+            }
+            case 3:
+            {
+                char *villager = villagers[rand() % 4];
+                printf("You grab %s by the shoulders and shake.\n", villager);
+                int result = roll(3);
+                if (result == 3)
+                {
+                    printf("Their eyes focus on yours for just a moment.\n");
+                    printf("\"Run,\" they mouth silently. \"It is still here.\"\n");
+                    printf("Then they freeze again.\n");
+                    *honor += 5;
+                }
+                else
+                    printf("Nothing. Their face stays blank.\n");
+                break;
+            }
+            case 4:
+                printf("You light the thatch. The fire spreads fast.\n");
+                printf("It does not help. But it cannot be undone.\n");
+                *honor -= 25;
+                printf("A frozen child stands three feet from the flames.\n");
+                printf("You cannot move them fast enough. Honor -25.\n");
+                break;
+
+            case 5:
+                printf("\nYou walk out the way you came.\n");
+                printf("You tell yourself it was not your curse to break.\n");
+                *honor -= 5;
+                printf("Honor -5.\n");
+                running = 0;
+                break;
+
+            default:
+                printf("The village does not respond to indecision.\n");
+        }
+
+        if (choice >= 1 && choice <= 4 && roll(5) == 5)
+        {
+            printf("\nYou have seen enough here.\n");
+            running = 0;
+        }
+    }
+
+    printf("\nYou leave the village behind.\n");
+    printf("The silence follows you a long way down the road.\n");
+}
+
+void room_bridge(int *health, int *gold, int *honor)
+{
+    int choice  = 0;
+    int crossed = 0;
+
+    printf("\n=============================================\n");
+    printf("        THE BRIDGE OF LIARS\n");
+    printf("=============================================\n");
+    printf("The bridge is narrow. One person wide.\n");
+    printf("Underneath it, nothing but dark air.\n");
+    printf("Halfway across, something enormous stands up.\n");
+    printf("\nThe troll speaks slowly:\n");
+    printf("\"I do not want gold. I want the truth.\n");
+    printf(" Answer honestly and you may pass.\n");
+    printf(" Lie to me and I will know.\"\n");
+
+    if (*honor >= 60)
+    {
+        printf("\nIt looks at you carefully.\n");
+        printf("\"You have done right by others. I can smell it.\n");
+        printf(" Pass, wanderer. You have already earned this.\"\n");
+        printf("\nThe troll steps aside without another word.\n");
+        *honor += 10;
+        printf("Honor +10.\n");
+        return;
+    }
+
+    printf("\nQuestion 1: \"Have you taken anything that was not yours?\"\n");
+    printf("  1. Yes\n");
+    printf("  2. No\n");
+    printf("Enter choice: ");
+    scanf("%d", &choice);
+
+    int honest1 = (*gold > 15 || *honor < 45) ? 1 : 0;
+
+    if (choice == 1 && honest1)
+    {
+        printf("\"Good. Honesty costs you something. I respect that.\"\n");
+        *honor += 5;
+    }
+    else if (choice == 2 && !honest1)
+    {
+        printf("The troll's eyes narrow.\n");
+        printf("\"You reek of stolen things. Try again.\"\n");
+        int dmg = roll(10) + 5;
+        *health -= dmg;
+        printf("It flicks you off the railing. You grab the stone. -%d health.\n", dmg);
+    }
+    else
+        printf("\"Hmm,\" it says. Nothing more.\n");
+
+    if (*health <= 0)
+    {
+        printf("You lose your grip. The gorge takes you.\n");
+        return;
+    }
+
+    printf("\nQuestion 2: \"Are you afraid?\"\n");
+    printf("  1. Yes\n");
+    printf("  2. No\n");
+    printf("Enter choice: ");
+    scanf("%d", &choice);
+
+    if (choice == 1)
+    {
+        printf("\"Then you are wise.\"\n");
+        printf("It steps aside and lets you cross.\n");
+        *honor += 10;
+        crossed = 1;
+    }
+    else
+    {
+        printf("\"Liar.\"\n");
+        if (*gold >= 10)
+        {
+            printf("It holds out a hand. You give it 10 gold.\n");
+            printf("It pockets the coins. \"Brave fool. Go.\"\n");
+            *gold -= 10;
+            crossed = 1;
+        }
+        else
+        {
+            printf("It shoves you back the way you came.\n");
+            printf("\"Come back when you can be honest.\"\n");
+            int dmg = roll(8);
+            *health -= dmg;
+            printf("You take %d damage in the fall back. Health: %d\n", dmg, *health);
+        }
+    }
+
+    if (crossed)
+        printf("\nYou are across. The gorge yawns behind you.\n");
+}
+
+void room_crypt(int *health, int *honor, int *kills)
+{
+    int choice   = 0;
+    int running  = 1;
+    int wave     = 1;
+    int survived = 0;
+
+    char *undead[3] = {"a shambling revenant", "a hollow knight", "a wailing shade"};
+
+    printf("\n=============================================\n");
+    printf("           THE ANCIENT CRYPT\n");
+    printf("=============================================\n");
+    printf("The floor is broken graves. The walls weep.\n");
+    printf("Something moves in the far corner.\n");
+    printf("Then another. Then a third.\n");
+    printf("They have noticed you.\n");
+
+    while (running && wave <= 3)
+    {
+        char *enemy = undead[wave - 1];
+        printf("\nWave %d: %s approaches!\n", wave, enemy);
+        printf("Health: %d\n", *health);
+        printf("\nHow do you face it?\n");
+        printf("  1. Charge head-on\n");
+        printf("  2. Wait and let it come to you\n");
+        printf("  3. Use the environment\n");
+        printf("  4. Run for the exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+            case 1:
+            {
+                int atk = roll(8);
+                int def = roll(10);
+                printf("You charge!\n");
+                if (atk >= def)
+                {
+                    printf("You cut it down before it reaches you. +1 kill.\n");
+                    (*kills)++;
+                    wave++;
+                    survived++;
+                }
+                else
+                {
+                    int dmg = roll(12);
+                    *health -= dmg;
+                    printf("It was faster. You take %d damage. Health: %d\n",
+                           dmg, *health);
+                    if (roll(2) == 2)
+                    {
+                        printf("You finish it despite the wound. +1 kill.\n");
+                        (*kills)++;
+                        wave++;
+                        survived++;
+                    }
+                }
+                break;
+            }
+            case 2:
+            {
+                int patience = roll(6);
+                printf("You hold your ground. The %s circles you slowly.\n", enemy);
+                if (patience >= 4)
+                {
+                    printf("You find the gap and strike clean. +1 kill.\n");
+                    (*kills)++;
+                    *honor += 5;
+                    wave++;
+                    survived++;
+                }
+                else
+                {
+                    int dmg = roll(8);
+                    *health -= dmg;
+                    printf("It feints. You take %d damage. Health: %d\n",
+                           dmg, *health);
+                }
+                break;
+            }
+            case 3:
+            {
+                printf("You grab a loose stone lid and heave it.\n");
+                int crush = roll(4);
+                if (crush >= 3)
+                {
+                    printf("It buries the creature under rubble. +1 kill.\n");
+                    (*kills)++;
+                    *honor += 10;
+                    wave++;
+                    survived++;
+                }
+                else
+                {
+                    printf("It shatters uselessly. The creature does not slow.\n");
+                    int dmg = roll(6);
+                    *health -= dmg;
+                    printf("It claws you for %d damage. Health: %d\n", dmg, *health);
+                }
+                break;
+            }
+            case 4:
+                printf("You turn and sprint for the stairs.\n");
+                *honor -= 10;
+                printf("You make it out. Honor -10.\n");
+                running = 0;
+                break;
+
+            default:
+            {
+                int dmg = roll(6);
+                *health -= dmg;
+                printf("Hesitation costs you. -%d health. Health: %d\n", dmg, *health);
+                break;
+            }
+        }
+
+        if (*health <= 0)
+        {
+            printf("\nThe crypt goes quiet. So do you.\n");
+            running = 0;
+        }
+    }
+
+    if (survived == 3)
+    {
+        printf("\n=============================================\n");
+        printf("  All three are down. The crypt is still.\n");
+        printf("  Honor +15 for standing your ground.\n");
+        printf("=============================================\n");
+        *honor += 15;
+    }
+}
+
+void room_oracle(int *health, int *gold, int *honor)
+{
+    int choice  = 0;
+    int running = 1;
+    int visited = 0;
+
+    printf("\n=============================================\n");
+    printf("           THE ORACLE'S CAVE\n");
+    printf("=============================================\n");
+    printf("A hundred mirrors line the walls.\n");
+    printf("Each one shows a different version of you.\n");
+    printf("An old woman sits at the center, eyes closed.\n");
+    printf("\n\"I have been waiting,\" she says.\n");
+    printf("\"Sit. Ask. But know that I am never free.\"\n");
+
+    while (running)
+    {
+        printf("\nWhat do you ask of her?\n");
+        printf("  1. Heal me  (costs 20 gold)\n");
+        printf("  2. Tell me something true  (costs 10 honor)\n");
+        printf("  3. Show me my greatest threat  (free)\n");
+        printf("  4. Give her a memory in exchange for strength\n");
+        printf("  5. Leave the cave\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+            case 1:
+                if (*gold < 20)
+                {
+                    printf("She shakes her head. \"You cannot afford this.\"\n");
+                    break;
+                }
+                *gold   -= 20;
+                *health += 30;
+                if (*health > 100) *health = 100;
+                printf("She places one hand on your chest.\n");
+                printf("The wounds close slowly. Health restored to %d.\n", *health);
+                break;
+
+            case 2:
+                if (*honor < 10)
+                {
+                    printf("\"You have nothing worth taking from you, child.\n");
+                    printf(" Come back when you have earned more.\"\n");
+                    break;
+                }
+                *honor -= 10;
+                int truth = roll(4);
+                if (truth == 1)
+                    printf("\"The bridge troll will spare those with clean hands.\"\n");
+                else if (truth == 2)
+                    printf("\"The dragon is not evil. It is grieving.\"\n");
+                else if (truth == 3)
+                    printf("\"There is gold hidden in the crypt's third alcove.\"\n");
+                else
+                    printf("\"The village curse can be broken. The candle behind the well.\"\n");
+                printf("Honor -10.\n");
+                break;
+
+            case 3:
+                if (visited)
+                {
+                    printf("\"You have already looked. Looking again changes nothing.\"\n");
+                    break;
+                }
+                visited = 1;
+                int threat = roll(3);
+                printf("She points to the largest mirror.\n");
+                printf("You see yourself, but wrong. Hollow.\n");
+                if (threat == 1)
+                    printf("\"Your greatest enemy is impatience.\"\n");
+                else if (threat == 2)
+                    printf("\"Your greatest enemy is the version of you\n"
+                           " that does not ask for help.\"\n");
+                else
+                    printf("\"Your greatest enemy already knows your name.\"\n");
+                printf("You feel a chill that does not leave.\n");
+                break;
+
+            case 4:
+                printf("\"A memory,\" she repeats. \"Which kind?\"\n");
+                printf("  1. A happy one\n");
+                printf("  2. A painful one\n");
+                printf("Enter choice: ");
+                int mem;
+                scanf("%d", &mem);
+                if (mem == 1)
+                {
+                    printf("You give her something warm. Something you loved.\n");
+                    printf("She takes it gently. \"This was precious. Thank you.\"\n");
+                    printf("Your arms feel stronger. But something is gone.\n");
+                    *health += 15;
+                    if (*health > 100) *health = 100;
+                    *honor  -= 5;
+                    printf("Health +15. Honor -5.\n");
+                }
+                else if (mem == 2)
+                {
+                    printf("You give her something heavy. Something you carry.\n");
+                    printf("She holds it carefully, like it has weight.\n");
+                    printf("\"You did not deserve this,\" she says. \"Now it is mine.\"\n");
+                    *honor += 15;
+                    printf("Honor +15. The weight is gone.\n");
+                }
+                else
+                    printf("She waits. You cannot decide. She says nothing.\n");
+                break;
+
+            case 5:
+                printf("\nShe nods without opening her eyes.\n");
+                printf("\"The road knows where you are going.\"\n");
+                printf("\"I am not sure you do.\"\n");
+                running = 0;
+                break;
+
+            default:
+                printf("The mirrors ripple. She does not respond.\n");
+        }
+    }
+}
+
+void room_siege(int *health, int *armor, int *kills, int *honor)
+{
+    int choice  = 0;
+    int running = 1;
+    int held    = 1;
+
+    char *attackers[3] = {"a dark rider", "an orc war chief", "a battering ram crew"};
+
+    printf("\n=============================================\n");
+    printf("        THE SIEGE OF IRONKEEP\n");
+    printf("=============================================\n");
+    printf("You crest the hill and the castle is already burning.\n");
+    printf("Soldiers scramble on the walls. Below, an army presses in.\n");
+    printf("A captain grabs your arm: \"Are you with us or not?\"\n");
+
+    if (*honor >= 60)
+    {
+        printf("\nHe looks at your face and nods.\n");
+        printf("\"I have heard of you. Take the east wall.\"\n");
+        printf("They hand you a shield. Armor +2.\n");
+        *armor += 2;
+    }
+    else
+    {
+        printf("\nHe looks at you sideways. \"Stay out of the way then.\"\n");
+        printf("You will have to earn their trust here.\n");
+    }
+
+    while (running && held)
+    {
+        int event = roll(4);
+        char *threat = attackers[rand() % 3];
+
+        printf("\n--- The battle shifts ---\n");
+        printf("Health: %d | Armor: %d\n", *health, *armor);
+
+        if (event == 1)
+        {
+            printf("%s is breaking through the gate!\n", threat);
+            printf("  1. Hold the gate with the soldiers\n");
+            printf("  2. Fire arrows from the wall\n");
+            printf("  3. Pour oil from above and light it\n");
+            printf("  4. Fall back and let them through\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+
+            if (choice == 1)
+            {
+                int result = roll(6) + *armor;
+                if (result >= 5)
+                {
+                    printf("You hold. Barely. The gate stands. +1 kill.\n");
+                    (*kills)++;
+                    *honor += 5;
+                }
+                else
+                {
+                    int dmg = roll(10) - *armor;
+                    if (dmg < 0) dmg = 0;
+                    *health -= dmg;
+                    printf("You take %d damage in the crush. Health: %d\n",
+                           dmg, *health);
+                }
+            }
+            else if (choice == 2)
+            {
+                int shot = roll(3);
+                if (shot >= 2)
+                {
+                    printf("Your arrow finds the gap in the armor. +1 kill.\n");
+                    (*kills)++;
+                }
+                else
+                    printf("The arrow skips off plate. The push continues.\n");
+            }
+            else if (choice == 3)
+            {
+                printf("The oil catches. The screaming is awful.\n");
+                printf("But the gate holds. +2 kills.\n");
+                *kills += 2;
+                *honor -= 10;
+                printf("Honor -10. It was effective. Not clean.\n");
+            }
+            else
+            {
+                printf("The gate falls. The soldiers look at you.\n");
+                held = 0;
+                *honor -= 20;
+                printf("Honor -20.\n");
+            }
+        }
+        else if (event == 2)
+        {
+            printf("A soldier next to you goes down, badly hurt.\n");
+            printf("  1. Drag them to safety\n");
+            printf("  2. Keep fighting, there is no time\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+
+            if (choice == 1)
+            {
+                int dmg = roll(6);
+                *health -= dmg;
+                printf("You pull them clear. You take %d damage doing it.\n", dmg);
+                printf("Honor +10.\n");
+                *honor += 10;
+            }
+            else
+            {
+                printf("You stay in the fight. The soldier does not survive.\n");
+                *honor -= 5;
+                printf("Honor -5.\n");
+            }
+        }
+        else if (event == 3)
+        {
+            printf("The captain shouts: the enemy is retreating!\n");
+            printf("  1. Chase them down\n");
+            printf("  2. Hold the walls and let them go\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+
+            if (choice == 1)
+            {
+                int result = roll(4);
+                if (result >= 3)
+                {
+                    printf("You run them down. +2 kills.\n");
+                    *kills += 2;
+                }
+                else
+                {
+                    int dmg = roll(8);
+                    *health -= dmg;
+                    printf("It was a feint. You take %d damage. Health: %d\n",
+                           dmg, *health);
+                }
+            }
+            else
+            {
+                printf("You hold the walls. The captain claps your shoulder.\n");
+                printf("Honor +5.\n");
+                *honor += 5;
+            }
+        }
+        else
+        {
+            printf("A lull in the fighting. The smoke is thick.\n");
+            printf("  1. Bind your wounds\n");
+            printf("  2. Check on the other defenders\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+
+            if (choice == 1)
+            {
+                int healed = roll(10) + 5;
+                *health += healed;
+                if (*health > 100) *health = 100;
+                printf("You patch yourself up. Health +%d. Now: %d\n",
+                       healed, *health);
+            }
+            else
+            {
+                printf("Three soldiers. Alive. Barely.\n");
+                printf("One of them says: \"Glad you are here.\"\n");
+                *honor += 5;
+                printf("Honor +5.\n");
+            }
+        }
+
+        if (*health <= 0)
+        {
+            printf("\nYou fall on the walls of Ironkeep.\n");
+            printf("They will remember your name here.\n");
+            running = 0;
+        }
+
+        if (running && held)
+        {
+            printf("\nThe siege continues. Do you stay or go?\n");
+            printf("  1. Keep fighting\n");
+            printf("  2. Slip away while you still can\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+            if (choice != 1)
+            {
+                printf("You drop from the wall and disappear into the smoke.\n");
+                running = 0;
+            }
+        }
+    }
+
+    if (held && *health > 0)
+    {
+        printf("\n=============================================\n");
+        printf("  Ironkeep holds. The army breaks.\n");
+        printf("  The captain finds you in the aftermath.\n");
+        printf("  \"We would not have held without you.\"\n");
+        printf("  Honor +20.\n");
+        printf("=============================================\n");
+        *honor += 20;
+    }
+}
 				break;
 			}
 			case 27:
