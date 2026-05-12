@@ -659,13 +659,12 @@ int main(int argc, char *argv[])
 			{
 				GuckMan();
 				puts("room26");
-				
-void room_moria(int *score);
-void room_shelob(int *score);
-void room_tower(int *score);
-void room_blackgate(int *score);
-void room_mountdoom(int *score);
-void save_log(int score);
+				static void room_moria(int *score);
+static void room_shelob(int *score);
+static void room_tower(int *score);
+static void room_blackgate(int *score);
+static void room_mountdoom(int *score);
+static void save_log(int score);
 
 int main(void)
 {
@@ -744,7 +743,7 @@ int main(void)
     return 0;
 }
 
-void room_moria(int *score)
+static void room_moria(int *score)
 {
     int choice = 0;
     int randomEvent = 0;
@@ -794,7 +793,7 @@ void room_moria(int *score)
     printf("\nYou return to the hallway.\n");
 }
 
-void room_shelob(int *score)
+static void room_shelob(int *score)
 {
     int choice = 0;
     int randomEvent = 0;
@@ -852,7 +851,7 @@ void room_shelob(int *score)
     printf("\nYou return to the hallway.\n");
 }
 
-void room_tower(int *score)
+static void room_tower(int *score)
 {
     int choice = 0;
     int randomEvent = 0;
@@ -910,7 +909,7 @@ void room_tower(int *score)
     printf("\nYou return to the hallway.\n");
 }
 
-void room_blackgate(int *score)
+static void room_blackgate(int *score)
 {
     int choice = 0;
     int randomEvent = 0;
@@ -960,7 +959,7 @@ void room_blackgate(int *score)
     printf("\nYou return to the hallway.\n");
 }
 
-void room_mountdoom(int *score)
+static void room_mountdoom(int *score)
 {
     int choice = 0;
     int randomEvent = 0;
@@ -1011,7 +1010,7 @@ void room_mountdoom(int *score)
     printf("\nYou return to the hallway.\n");
 }
 
-void save_log(int score)
+static void save_log(int score)
 {
     FILE *fp = fopen("quest_log.txt", "w");
     if (fp == NULL)
